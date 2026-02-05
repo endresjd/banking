@@ -13,7 +13,6 @@ struct BillListView: View {
     @Binding var accountBalance: Double
     @State private var showPaidBills = false
     @State private var selectedBill: Bill?
-    @State private var showingPaymentConfirmation = false
     
     var filteredBills: [Bill] {
         bills
@@ -58,7 +57,6 @@ struct BillListView: View {
                         Button {
                             if !bill.isPaid {
                                 selectedBill = bill
-                                showingPaymentConfirmation = true
                             }
                         } label: {
                             BillRow(bill: bill)
@@ -80,16 +78,14 @@ struct BillListView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showingPaymentConfirmation) {
-                if let selectedBill {
-                    PaymentConfirmationView(
-                        bill: selectedBill,
-                        accountBalance: $accountBalance,
-                        onConfirm: {
-                            payBill(selectedBill)
-                        }
-                    )
-                }
+            .sheet(item: $selectedBill) { bill in
+                PaymentConfirmationView(
+                    bill: bill,
+                    accountBalance: $accountBalance,
+                    onConfirm: {
+                        payBill(bill)
+                    }
+                )
             }
         }
     }
@@ -101,7 +97,6 @@ struct BillListView: View {
         
         bills[index].isPaid = true
         accountBalance -= bill.amount
-        showingPaymentConfirmation = false
         selectedBill = nil
     }
 }
