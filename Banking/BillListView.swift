@@ -90,6 +90,9 @@ struct BillListView: View {
                     accountBalance: $accountBalance,
                     onConfirm: {
                         payBill(bill)
+                    },
+                    onDismiss: {
+                        selectedBill = nil
                     }
                 )
             }
@@ -103,7 +106,6 @@ struct BillListView: View {
         
         bills[index].isPaid = true
         accountBalance -= bill.amount
-        selectedBill = nil
     }
 }
 
