@@ -34,7 +34,7 @@ struct PaymentConfirmationView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(role: .cancel) {
                         dismiss()
                     }
                     .disabled(isProcessing || showSuccess)
