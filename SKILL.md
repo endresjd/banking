@@ -5,6 +5,64 @@ description: Use this before writing any with Swift code, before planning code c
 
 ## Swift Styleguide
 
+### File organization
+
+Maintain a one-to-one relationship between types and files. Each struct, class, enum, actor, or protocol should be defined in its own dedicated file.
+
+**Guidelines:**
+- Create a separate file for each new type
+- Name the file exactly as the type (e.g., `PaymentView.swift` for `struct PaymentView`)
+- Avoid defining multiple types in a single file
+- Keep related helper types in their own files rather than nesting them in the same file
+
+**Exceptions:**
+- Very small, private helper types that are only used within a single type and won't be used elsewhere
+- Extensions of existing types can be in separate files (e.g., `String+Extensions.swift`)
+- Protocol conformance extensions can be in separate files (e.g., `MyType+Codable.swift`)
+
+#### Examples
+
+```swift
+// ❌ Bad - Multiple types in one file (PaymentViews.swift)
+struct PaymentConfirmationView: View {
+    // ...
+}
+
+struct PaymentSuccessView: View {
+    // ...
+}
+
+struct PaymentDetailRow: View {
+    // ...
+}
+
+// ✅ Good - Each type in its own file
+// File: PaymentConfirmationView.swift
+struct PaymentConfirmationView: View {
+    // ...
+}
+
+// File: PaymentSuccessView.swift
+struct PaymentSuccessView: View {
+    // ...
+}
+
+// File: PaymentDetailRow.swift
+struct PaymentDetailRow: View {
+    // ...
+}
+
+// ✅ Good - Exception for private helper
+// File: PaymentView.swift
+struct PaymentView: View {
+    // ...
+    
+    private struct PriceLabel: View {
+        // Small private helper only used here
+    }
+}
+```
+
 ### Indentation
 
 4 spaces, no tabs.
@@ -56,6 +114,60 @@ func fetchJoke(ofType type: String) async -> Joke? {
 
 Never use triple slash (`///`) in the body of a function or block.  Only use them outside when attached to types, properties, functions, etc.
 
+### Type inference
+
+Omit explicit type annotations when the type can be clearly inferred from the assigned value. This makes code more concise and easier to read.
+
+**Always omit the type when:**
+- The right-hand side clearly indicates the type
+- Using property wrappers like `@State`, `@Binding`, etc.
+- Assigning literal values or calling initializers
+
+**Include the type when:**
+- The inferred type would be incorrect or ambiguous
+- It significantly improves code clarity
+- Working with protocols or generic constraints
+
+#### Examples
+
+```swift
+// ❌ Bad - Redundant type annotation
+@State private var selectedAccount: Account = Account.samples[0]
+let isValid: Bool = true
+var count: Int = 0
+let items: [String] = ["one", "two", "three"]
+
+// ✅ Good - Type inferred
+@State private var selectedAccount = Account.samples[0]
+let isValid = true
+var count = 0
+let items = ["one", "two", "three"]
+
+// ❌ Bad - Type needed but omitted (ambiguous)
+let value = 42.0  // Is this Double or CGFloat?
+
+// ✅ Good - Explicit when needed
+let value: CGFloat = 42.0
+
+// ✅ Good - Type inferred from initializer
+let date = Date()
+let decoder = JSONDecoder()
+@State private var showingAlert = false
+@Binding var text: String  // Type needed for parameter
+
+// ❌ Bad - Redundant for properties with obvious types
+class ViewModel {
+    @Published var items: [Item] = []
+    var count: Int = 0
+}
+
+// ✅ Good
+class ViewModel {
+    @Published var items = [Item]()
+    var count = 0
+}
+```
+
 ### `guard` clauses
 
 `guard` clauses must be written single-line. If a clause combines multiple
@@ -83,6 +195,85 @@ guard !somethingCondition1,
 ```
 
 Any `guard` clause must be followed by a blank line and preceded by blank line.
+
+### Property ordering
+
+Properties should be ordered from most visible to least visible outside the type. Within each visibility level, properties with property wrappers should be grouped together at the top.
+
+**Ordering priority:**
+1. **Public** properties (most visible)
+   - Properties with wrappers first (e.g., `@Published`, `@AppStorage`)
+   - Regular properties after
+2. **Internal** properties (default visibility)
+   - Properties with wrappers first
+   - Regular properties after
+3. **Private** properties (least visible)
+   - Properties with wrappers first (e.g., `@State`, `@StateObject`, `@Environment`)
+   - Regular properties after
+
+#### Examples
+
+```swift
+// ❌ Bad - Random ordering
+struct ContentView: View {
+    private var title = "Hello"
+    @State private var isShowing = false
+    let id: UUID
+    @Binding var text: String
+    private let formatter = DateFormatter()
+    @Environment(\.dismiss) private var dismiss
+}
+
+// ✅ Good - Ordered by visibility, wrappers first
+struct ContentView: View {
+    @Binding var text: String
+    let id: UUID
+    @Environment(\.dismiss) private var dismiss
+    @State private var isShowing = false
+    private let formatter = DateFormatter()
+    private var title = "Hello"
+}
+
+// ❌ Bad - Mixed ordering
+class ViewModel: ObservableObject {
+    private var cache = [String: Data]()
+    @Published var items = [Item]()
+    let configuration: Config
+    @Published var isLoading = false
+    private let apiKey: String
+}
+
+// ✅ Good - Public wrappers, public regular, private wrappers, private regular
+class ViewModel: ObservableObject {
+    @Published var items = [Item]()
+    @Published var isLoading = false
+    let configuration: Config
+    private let apiKey: String
+    private var cache = [String: Data]()
+}
+
+// ✅ Good - Clear grouping in a complex view
+struct PaymentView: View {
+    // Public/Internal properties with wrappers
+    @Binding var accountBalance: Double
+    
+    // Public/Internal properties
+    let bill: Bill
+    let onConfirm: () -> Void
+    let onDismiss: () -> Void
+    
+    // Private properties with wrappers
+    @Environment(\.dismiss) private var dismiss
+    @State private var isProcessing = false
+    @State private var showSuccess = false
+    @State private var paymentDate = Date()
+    
+    // Private computed properties
+    private var hasInsufficientFunds: Bool {
+        accountBalance < bill.amount
+    }
+}
+```
 
 ### Vertical spacing
 

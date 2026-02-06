@@ -9,12 +9,17 @@ import SwiftUI
 
 /// Displays the payment confirmation content with details and date picker.
 struct PaymentConfirmationContentView: View {
+    @Binding var paymentDate: Date
     let bill: Bill
     let accountBalance: Double
     let hasInsufficientFunds: Bool
-    @Binding var paymentDate: Date
     let isProcessing: Bool
     let onConfirm: () -> Void
+    @State private var selectedAccount = Account.samples[0]
+    
+    private var accountHasInsufficientFunds: Bool {
+        selectedAccount.balance < bill.amount
+    }
     
     var body: some View {
         ScrollView {
@@ -34,17 +39,50 @@ struct PaymentConfirmationContentView: View {
             .padding(.top, 32)
             
             VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text("Account")
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    Menu {
+                        ForEach(Account.samples) { account in
+                            Button {
+                                selectedAccount = account
+                            } label: {
+                                VStack(alignment: .leading) {
+                                    Text(account.name)
+                                    Text(account.balance, format: .currency(code: "USD"))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(selectedAccount.name)
+                                .foregroundStyle(.primary)
+                            
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                
+                Divider()
+                
                 PaymentDetailRow(label: "Payment Amount", value: bill.amount, format: .currency(code: "USD"))
                 
                 Divider()
                 
-                PaymentDetailRow(label: "Current Balance", value: accountBalance, format: .currency(code: "USD"))
+                PaymentDetailRow(label: "Current Balance", value: selectedAccount.balance, format: .currency(code: "USD"))
                 
                 PaymentDetailRow(
                     label: "Balance After Payment",
-                    value: accountBalance - bill.amount,
+                    value: selectedAccount.balance - bill.amount,
                     format: .currency(code: "USD"),
-                    isWarning: hasInsufficientFunds
+                    isWarning: accountHasInsufficientFunds
                 )
             }
             .padding()
@@ -70,7 +108,7 @@ struct PaymentConfirmationContentView: View {
             .background(Color(.systemGray6))
             .clipShape(RoundedRectangle(cornerRadius: 12))
             
-            if hasInsufficientFunds {
+            if accountHasInsufficientFunds {
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundStyle(.orange)
@@ -100,7 +138,7 @@ struct PaymentConfirmationContentView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .disabled(hasInsufficientFunds || isProcessing)
+            .disabled(accountHasInsufficientFunds || isProcessing)
             .padding(.bottom)
         }
     }
