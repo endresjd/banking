@@ -197,21 +197,15 @@ struct CircularAmountPicker: View {
 }
 
 #Preview {
-    struct PreviewWrapper: View {
-        @State private var selectedAmount: Decimal = 277.39
-        
-        var body: some View {
-            CircularAmountPicker(
-                selectedAmount: $selectedAmount,
-                minimumAmount: 0,
-                minimumDueAmount: 39.60,
-                maximumAmount: 316.98,
-                topLabel: "CARD BALANCE $316.98",
-                bottomLabel: "NO INTEREST CHARGES"
-            )
-        }
-    }
-    
-    return PreviewWrapper()
+    @Previewable @State var selectedAmount: Decimal = 277.39
+
+    CircularAmountPicker(
+        selectedAmount: $selectedAmount,
+        minimumAmount: 0,
+        minimumDueAmount: 39.60,
+        maximumAmount: 316.98,
+        topLabel: "CARD BALANCE $316.98",
+        bottomLabel: "NO INTEREST CHARGES"
+    )
 }
 

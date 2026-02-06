@@ -57,22 +57,24 @@ struct AmountPickerView: View {
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                     
-                    HStack(spacing: 16) {
+                    VStack(spacing: 12) {
                         Button {
                         } label: {
                             HStack {
                                 Image(systemName: "info.circle.fill")
                                 Text("Learn More")
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.subheadline)
                         }
                         
                         Button {
                         } label: {
                             HStack {
-                                Image(systemName: "creditcard.fill")
+                                Image(systemName: "keyboard.chevron.compact.down.fill")
                                 Text("Other Amount")
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .font(.subheadline)
                         }
                     }
@@ -120,9 +122,11 @@ struct AmountPickerView: View {
 }
 
 #Preview {
+    @Previewable @State var selectedAmount = Decimal(77.39)
+
     AmountPickerView(
         bill: Bill.samples[0],
-        selectedAmount: .constant(277.39),
+        selectedAmount: $selectedAmount,
         onConfirm: {
         },
         onDismiss: {

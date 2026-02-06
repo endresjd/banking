@@ -406,6 +406,67 @@ Keep logical blocks together.  vars and lets should not have blank lines between
 #### Examples
 
 ```swift
+// ✅ Good - Blank line before #Preview
+struct ExampleView: View {
+    var body: some View {
+        Text("Hello")
+    }
+}
+
+#Preview {
+    ExampleView()
+}
+```
+
+### `#Preview` spacing
+
+Always include a blank line before any `#Preview` block.
+
+### `#Preview` state placement
+
+All preview setup must live inside the `#Preview` macro. Do not define wrapper or container views outside the macro to host state. When previews require mutable state, use `@Previewable @State` inside the `#Preview` block.
+
+#### Examples
+
+```swift
+// ✅ Good - State defined inside #Preview using @Previewable
+#Preview {
+    @Previewable @State var selectedAmount = Decimal(77.39)
+
+    AmountPickerView(
+        bill: Bill.samples[0],
+        selectedAmount: $selectedAmount,
+        onConfirm: {
+        },
+        onDismiss: {
+        }
+    )
+}
+
+// ❌ Bad - Wrapper type outside #Preview
+private extension AmountPickerView {
+    struct PreviewContainer: View {
+        @State private var selectedAmount = Decimal(77.39)
+
+        var body: some View {
+            AmountPickerView(
+                bill: Bill.samples[0],
+                selectedAmount: $selectedAmount,
+                onConfirm: {
+                },
+                onDismiss: {
+                }
+            )
+        }
+    }
+}
+
+#Preview {
+    AmountPickerView.PreviewContainer()
+}
+```
+
+```swift
 // ❌ Bad
 let a = 1
 

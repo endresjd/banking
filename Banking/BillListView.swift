@@ -121,8 +121,11 @@ struct BillListView: View {
 }
 
 #Preview {
+    @Previewable @State var bills = Bill.samples
+    @Previewable @State var accountBalance: Decimal = 5000.00
+
     BillListView(
-        bills: .constant(Bill.samples),
-        accountBalance: .constant(5000.00)
+        bills: $bills,
+        accountBalance: $accountBalance
     )
 }
