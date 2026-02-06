@@ -21,7 +21,6 @@ struct AmountPickerView: View {
     /// Closure called when the view is dismissed.
     let onDismiss: () -> Void
     
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -94,7 +93,6 @@ struct AmountPickerView: View {
                     
                     Button {
                         onConfirm()
-                        dismiss()
                     } label: {
                         Text("Pay \(selectedAmount.formatted(.currency(code: "USD")))")
                             .frame(maxWidth: .infinity)
@@ -112,7 +110,6 @@ struct AmountPickerView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(role: .close) {
                         onDismiss()
-                        dismiss()
                     }
                     .buttonStyle(.glass)
                 }
