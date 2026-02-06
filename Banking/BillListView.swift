@@ -93,7 +93,7 @@ struct BillListView: View {
                     }
                 }
             }
-            .sheet(item: $selectedBill) { bill in
+            .fullScreenCover(item: $selectedBill) { bill in
                 PaymentConfirmationView(
                     accountBalance: $accountBalance,
                     bill: bill,

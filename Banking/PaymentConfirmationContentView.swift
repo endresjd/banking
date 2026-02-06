@@ -33,8 +33,8 @@ struct PaymentConfirmationContentView: View {
     /// The amount to be paid (editable by the user).
     @State private var paymentAmount: Decimal
     
-    /// The text representation of the payment amount.
-    @State private var amountText = ""
+    /// Indicates whether the amount picker sheet is presented.
+    @State private var showAmountPicker = false
     
     /// Creates a new payment confirmation content view.
     ///
@@ -60,9 +60,8 @@ struct PaymentConfirmationContentView: View {
         self.isProcessing = isProcessing
         self.onConfirm = onConfirm
         self._paymentAmount = State(initialValue: bill.amount)
-        self._amountText = State(initialValue: bill.amount.formatted(.number.precision(.fractionLength(2))))
     }
-    
+
     /// Indicates whether the selected account has insufficient funds for the payment amount.
     private var accountHasInsufficientFunds: Bool {
         selectedAccount.balance < paymentAmount
@@ -125,19 +124,29 @@ struct PaymentConfirmationContentView: View {
                     
                     Spacer()
                     
-                    TextField(
-                        "Amount",
-                        text: $amountText
-                    )
-                    .keyboardType(.decimalPad)
-                    .multilineTextAlignment(.trailing)
-                    .bold()
-                    .onChange(of: amountText) { _, newValue in
-                        if let decimal = Decimal(string: newValue) {
-                            paymentAmount = decimal
+                    Button {
+                        showAmountPicker = true
+                    } label: {
+                        Text(paymentAmount.formatted(.currency(code: "USD")))
+                            .bold()
+                    }
+                    .buttonStyle(.plain)
+                }
+                .sheet(isPresented: $showAmountPicker) {
+                    NavigationStack {
+                        ScrollView {
+                            AmountPickerView(
+                                bill: bill,
+                                selectedAmount: $paymentAmount,
+                                onConfirm: {
+                                    showAmountPicker = false
+                                },
+                                onDismiss: {
+                                    showAmountPicker = false
+                                }
+                            )
                         }
                     }
-                    .frame(width: 120)
                 }
                 
                 Divider()
@@ -208,4 +217,21 @@ struct PaymentConfirmationContentView: View {
             .padding(.bottom)
         }
     }
+}
+
+#Preview {
+    @Previewable @State var paymentDate = Date()
+
+    let bill = Bill.samples[0]
+    let accountBalance: Decimal = 5000.00
+
+    PaymentConfirmationContentView(
+        paymentDate: $paymentDate,
+        bill: bill,
+        accountBalance: accountBalance,
+        hasInsufficientFunds: accountBalance < bill.amount,
+        isProcessing: false
+    ) {
+    }
+    .padding(.horizontal)
 }

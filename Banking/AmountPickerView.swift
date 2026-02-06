@@ -25,7 +25,7 @@ struct AmountPickerView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 32) {
+            VStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Choose Amount")
                         .font(.title2)
@@ -81,9 +81,8 @@ struct AmountPickerView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
-                
-                Spacer()
-                
+                .padding(.bottom)
+
                 HStack(spacing: 16) {
                     Button {
                     } label: {
@@ -105,8 +104,9 @@ struct AmountPickerView: View {
                     .controlSize(.large)
                 }
                 .padding(.horizontal)
-                .padding(.bottom)
+                .padding(.bottom, 24)
             }
+            .padding(.top, 12)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -422,6 +422,10 @@ struct ExampleView: View {
 
 Always include a blank line before any `#Preview` block.
 
+### `#Preview` placement
+
+All previews must be at the very bottom of the file at the top level (no nesting). Do not insert previews in the middle of types or randomly between declarations.
+
 ### `#Preview` state placement
 
 All preview setup must live inside the `#Preview` macro. Do not define wrapper or container views outside the macro to host state. When previews require mutable state, use `@Previewable @State` inside the `#Preview` block.
