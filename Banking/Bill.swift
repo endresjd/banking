@@ -18,6 +18,9 @@ struct Bill: Identifiable {
     /// The amount due for this bill.
     let amount: Decimal
     
+    /// The minimum amount that must be paid.
+    let minimumDueAmount: Decimal
+    
     /// The date when the bill is due.
     let dueDate: Date
     
@@ -31,6 +34,7 @@ struct Bill: Identifiable {
         id: UUID = UUID(),
         payee: String,
         amount: Decimal,
+        minimumDueAmount: Decimal? = nil,
         dueDate: Date,
         category: BillCategory,
         isPaid: Bool = false
@@ -38,6 +42,7 @@ struct Bill: Identifiable {
         self.id = id
         self.payee = payee
         self.amount = amount
+        self.minimumDueAmount = minimumDueAmount ?? (amount * 0.125)
         self.dueDate = dueDate
         self.category = category
         self.isPaid = isPaid

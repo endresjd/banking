@@ -1068,3 +1068,101 @@ struct ProfileView: View {
 Write SwiftUI code that looks and feels like SwiftUI. The framework has matured
 significantly - trust its patterns and tools. Focus on solving user problems
 rather than implementing architectural patterns from other platforms.
+
+## Modern Swift Types
+
+### Never Use NS Types
+
+**NEVER use Foundation NS-prefixed types in Swift code.** Always use Swift's native types instead.
+
+**Prohibited NS types:**
+- `NSString` - Use `String` instead
+- `NSArray` - Use `Array` or `[Type]` instead
+- `NSDictionary` - Use `Dictionary` or `[Key: Value]` instead
+- `NSNumber` - Use `Int`, `Double`, `Bool`, `Decimal`, etc. instead
+- `NSDecimalNumber` - Use `Decimal` instead
+- `NSData` - Use `Data` instead
+- `NSDate` - Use `Date` instead
+- `NSURL` - Use `URL` instead
+- Any other `NS`-prefixed type from Objective-C
+
+**Rationale:** Swift provides native types that are more type-safe, expressive, and idiomatic. NS types are legacy Objective-C types that should only appear in interop scenarios with Objective-C code.
+
+#### Examples
+
+```swift
+// ❌ Bad - Using NS types
+let number: NSNumber = 42
+let text: NSString = "Hello"
+let decimal = someDecimal as NSDecimalNumber
+let value = decimal.doubleValue
+
+// ✅ Good - Using Swift native types
+let number = 42
+let text = "Hello"
+let value = Double("\(someDecimal)") ?? 0
+
+// ❌ Bad - Converting through NS types
+let range = (maximumAmount - minimumAmount) as NSDecimalNumber
+let rangeDouble = range.doubleValue
+
+// ✅ Good - Direct Swift conversions
+let range = maximumAmount - minimumAmount
+let rangeDouble = Double("\(range)") ?? 0
+```
+
+## Financial Data Types
+
+### Decimal for Monetary Values
+
+**Always use `Decimal` for monetary values and currency calculations.** Never use `Double` or `Float` for money.
+
+**Guidelines:**
+- All properties representing money amounts must be `Decimal`
+- All calculations involving money must use `Decimal` arithmetic
+- Never use `NSDecimalNumber` or `NSNumber` - use Swift's native `Decimal` type
+- Only convert to `Double` at the last possible moment for display/UI purposes (e.g., progress calculations for visual feedback)
+- When conversion to `Double` is necessary, use string interpolation: `Double("\(decimalValue)")`
+
+**Rationale:** Decimal provides exact decimal arithmetic without floating-point rounding errors, which is essential for financial calculations.
+
+#### Examples
+
+```swift
+// ✅ Good - Decimal for monetary values
+struct Bill {
+    let amount: Decimal
+    let balance: Decimal
+}
+
+struct Account {
+    let balance: Decimal
+}
+
+// ❌ Bad - Double for monetary values
+struct Bill {
+    let amount: Double
+    let balance: Double
+}
+
+// ✅ Good - Decimal calculations
+let total = price + tax
+let remaining = accountBalance - billAmount
+
+// ❌ Bad - Using NSDecimalNumber
+let range = (maximumAmount - minimumAmount) as NSDecimalNumber
+let value = range.doubleValue
+
+// ✅ Good - Convert Decimal to Double only when needed for UI
+let progress: Double = {
+    let range = Double("\(maximumAmount - minimumAmount)") ?? 0
+    let current = Double("\(selectedAmount - minimumAmount)") ?? 0
+    return range > 0 ? current / range : 0
+}()
+
+// ✅ Good - SwiftUI formatting with Decimal
+Text(amount, format: .currency(code: "USD"))
+
+// ❌ Bad - Storing calculated progress as Decimal when it's not money
+private var progress: Decimal  // Progress is 0-1, not a monetary value
+```
