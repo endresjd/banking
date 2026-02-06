@@ -9,7 +9,7 @@ import SwiftUI
 
 /// Displays the account balance and quick actions.
 struct AccountBalanceView: View {
-    let balance: Double
+    let balance: Decimal
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {

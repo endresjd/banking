@@ -9,11 +9,19 @@ import SwiftUI
 
 /// Displays a list of bills with filtering options.
 struct BillListView: View {
+    /// The list of bills to display.
     @Binding var bills: [Bill]
-    @Binding var accountBalance: Double
+    
+    /// The current account balance.
+    @Binding var accountBalance: Decimal
+    
+    /// Indicates whether to show paid bills in the list.
     @State private var showPaidBills = false
+    
+    /// The currently selected bill for payment.
     @State private var selectedBill: Bill?
     
+    /// Returns the filtered list of bills based on payment status and sorted by due date.
     var filteredBills: [Bill] {
         bills
             .filter {
@@ -24,7 +32,8 @@ struct BillListView: View {
             }
     }
     
-    var unpaidTotal: Double {
+    /// Returns the total amount of unpaid bills.
+    var unpaidTotal: Decimal {
         bills
             .filter {
                 !$0.isPaid
@@ -86,19 +95,21 @@ struct BillListView: View {
             }
             .sheet(item: $selectedBill) { bill in
                 PaymentConfirmationView(
-                    bill: bill,
                     accountBalance: $accountBalance,
+                    bill: bill,
                     onConfirm: {
                         payBill(bill)
-                    },
-                    onDismiss: {
-                        selectedBill = nil
                     }
-                )
+                ) {
+                    selectedBill = nil
+                }
             }
         }
     }
     
+    /// Marks a bill as paid and deducts the amount from the account balance.
+    ///
+    /// - Parameter bill: The bill to mark as paid.
     private func payBill(_ bill: Bill) {
         guard let index = bills.firstIndex(where: { $0.id == bill.id }) else {
             return

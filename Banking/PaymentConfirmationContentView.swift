@@ -9,16 +9,63 @@ import SwiftUI
 
 /// Displays the payment confirmation content with details and date picker.
 struct PaymentConfirmationContentView: View {
+    /// The selected date for the payment.
     @Binding var paymentDate: Date
+    
+    /// The bill to be paid.
     let bill: Bill
-    let accountBalance: Double
+    
+    /// The current account balance.
+    let accountBalance: Decimal
+    
+    /// Indicates whether the account has insufficient funds.
     let hasInsufficientFunds: Bool
+    
+    /// Indicates whether a payment is currently being processed.
     let isProcessing: Bool
+    
+    /// Closure called when the payment is confirmed.
     let onConfirm: () -> Void
+    
+    /// The currently selected account for payment.
     @State private var selectedAccount = Account.samples[0]
     
+    /// The amount to be paid (editable by the user).
+    @State private var paymentAmount: Decimal
+    
+    /// The text representation of the payment amount.
+    @State private var amountText = ""
+    
+    /// Creates a new payment confirmation content view.
+    ///
+    /// - Parameters:
+    ///   - paymentDate: Binding to the selected payment date.
+    ///   - bill: The bill to be paid.
+    ///   - accountBalance: The current account balance.
+    ///   - hasInsufficientFunds: Whether the account has insufficient funds.
+    ///   - isProcessing: Whether a payment is currently being processed.
+    ///   - onConfirm: Closure called when the payment is confirmed.
+    init(
+        paymentDate: Binding<Date>,
+        bill: Bill,
+        accountBalance: Decimal,
+        hasInsufficientFunds: Bool,
+        isProcessing: Bool,
+        onConfirm: @escaping () -> Void
+    ) {
+        self._paymentDate = paymentDate
+        self.bill = bill
+        self.accountBalance = accountBalance
+        self.hasInsufficientFunds = hasInsufficientFunds
+        self.isProcessing = isProcessing
+        self.onConfirm = onConfirm
+        self._paymentAmount = State(initialValue: bill.amount)
+        self._amountText = State(initialValue: bill.amount.formatted(.number.precision(.fractionLength(2))))
+    }
+    
+    /// Indicates whether the selected account has insufficient funds for the payment amount.
     private var accountHasInsufficientFunds: Bool {
-        selectedAccount.balance < bill.amount
+        selectedAccount.balance < paymentAmount
     }
     
     var body: some View {
@@ -72,7 +119,26 @@ struct PaymentConfirmationContentView: View {
                 
                 Divider()
                 
-                PaymentDetailRow(label: "Payment Amount", value: bill.amount, format: .currency(code: "USD"))
+                HStack {
+                    Text("Payment Amount")
+                        .foregroundStyle(.secondary)
+                    
+                    Spacer()
+                    
+                    TextField(
+                        "Amount",
+                        text: $amountText
+                    )
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+                    .bold()
+                    .onChange(of: amountText) { _, newValue in
+                        if let decimal = Decimal(string: newValue) {
+                            paymentAmount = decimal
+                        }
+                    }
+                    .frame(width: 120)
+                }
                 
                 Divider()
                 
@@ -80,7 +146,7 @@ struct PaymentConfirmationContentView: View {
                 
                 PaymentDetailRow(
                     label: "Balance After Payment",
-                    value: selectedAccount.balance - bill.amount,
+                    value: selectedAccount.balance - paymentAmount,
                     format: .currency(code: "USD"),
                     isWarning: accountHasInsufficientFunds
                 )

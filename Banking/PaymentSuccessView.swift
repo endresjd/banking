@@ -9,8 +9,13 @@ import SwiftUI
 
 /// Displays the payment success message.
 struct PaymentSuccessView: View {
+    /// The bill that was paid.
     let bill: Bill
+    
+    /// The date the payment was scheduled for.
     let paymentDate: Date
+    
+    /// Closure called when the view is dismissed.
     let onDismiss: () -> Void
     
     var body: some View {

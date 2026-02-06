@@ -9,12 +9,19 @@ import Foundation
 
 /// Represents a bank account.
 struct Account: Identifiable, Hashable {
+    /// Unique identifier for the account.
     let id: UUID
-    let name: String
-    let accountType: String
-    var balance: Double
     
-    init(id: UUID = UUID(), name: String, accountType: String, balance: Double) {
+    /// The display name of the account.
+    let name: String
+    
+    /// The type of account (e.g., "Checking", "Savings").
+    let accountType: String
+    
+    /// The current balance of the account.
+    var balance: Decimal
+    
+    init(id: UUID = UUID(), name: String, accountType: String, balance: Decimal) {
         self.id = id
         self.name = name
         self.accountType = accountType

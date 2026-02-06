@@ -9,17 +9,28 @@ import Foundation
 
 /// Represents a bill that can be paid through the banking app.
 struct Bill: Identifiable {
+    /// Unique identifier for the bill.
     let id: UUID
+    
+    /// The name of the payee.
     let payee: String
-    let amount: Double
+    
+    /// The amount due for this bill.
+    let amount: Decimal
+    
+    /// The date when the bill is due.
     let dueDate: Date
+    
+    /// The category of the bill.
     let category: BillCategory
+    
+    /// Indicates whether the bill has been paid.
     var isPaid: Bool
     
     init(
         id: UUID = UUID(),
         payee: String,
-        amount: Double,
+        amount: Decimal,
         dueDate: Date,
         category: BillCategory,
         isPaid: Bool = false

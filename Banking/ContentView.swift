@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var accountBalance: Double = 5432.50
-    @State private var bills: [Bill] = Bill.samples
+    /// The current account balance.
+    @State private var accountBalance: Decimal = 5432.50
+    
+    /// The list of bills.
+    @State private var bills = Bill.samples
     
     var body: some View {
         BillListView(

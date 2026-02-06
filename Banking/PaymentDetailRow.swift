@@ -9,10 +9,17 @@ import SwiftUI
 
 /// Displays a row of payment details.
 struct PaymentDetailRow: View {
+    /// The label describing the value.
     let label: String
-    let value: Double
-    let format: FloatingPointFormatStyle<Double>.Currency
-    var isWarning: Bool = false
+    
+    /// The monetary value to display.
+    let value: Decimal
+    
+    /// The currency format style for displaying the value.
+    let format: Decimal.FormatStyle.Currency
+    
+    /// Indicates whether to display the value as a warning (in red).
+    var isWarning = false
     
     var body: some View {
         HStack {

@@ -73,10 +73,17 @@ Use triple slash (`///`) for **API documentation only** - documenting types,
 properties, functions, and parameters. These comments appear before the declaration
 they document.
 
+**All public and internal properties, functions, types, and parameters must have documentation comments.** This includes:
+- Struct and class properties (unless they are private implementation details)
+- Function parameters and return values
+- Types (structs, classes, enums, protocols)
+- Computed properties that form part of the public API
+
 Use double slash (`//`) for:
 - Inline comments within function bodies to explain implementation details
 - Xcode directive comments ("MARK:", "TODO:", etc.)
 - Temporarily disabling blocks of code
+- Private implementation details that don't need formal documentation
 
 **Never use `///` inside function bodies.** Documentation comments are for the 
 public interface, not implementation details.
@@ -84,7 +91,31 @@ public interface, not implementation details.
 #### Examples
 
 ```swift
-// ✅ Good - API documentation
+// ✅ Good - Type and properties documented
+/// Represents a bill that can be paid through the banking app.
+struct Bill: Identifiable {
+    /// Unique identifier for the bill.
+    let id: UUID
+    
+    /// The name of the payee.
+    let payee: String
+    
+    /// The amount due for this bill.
+    let amount: Decimal
+    
+    /// The date when the bill is due.
+    let dueDate: Date
+}
+
+// ❌ Bad - No documentation for properties
+struct Bill: Identifiable {
+    let id: UUID
+    let payee: String
+    let amount: Decimal
+    let dueDate: Date
+}
+
+// ✅ Good - Function with parameter documentation
 /// Fetches a random joke from the API.
 ///
 /// - Parameter type: The type of joke to fetch.
@@ -109,6 +140,15 @@ func fetchJoke(ofType type: String) async -> Joke? {
 // Fetches a random joke from the API.
 func fetchJoke(ofType type: String) async -> Joke? {
     // ...
+}
+
+// ✅ Good - Private properties can use inline comments or no comments
+struct PaymentView: View {
+    /// The bill to be paid.
+    let bill: Bill
+    
+    // Internal state for managing the payment flow
+    @State private var isProcessing = false
 }
 ```
 
@@ -272,6 +312,90 @@ struct PaymentView: View {
     private var hasInsufficientFunds: Bool {
         accountBalance < bill.amount
     }
+}
+```
+
+### Trailing closures
+
+When a function or initializer's last parameter is a closure, always use trailing closure syntax at call sites. This makes the code more readable and follows Swift conventions.
+
+**Guidelines:**
+- If the last parameter is a closure (including `@escaping` closures), use trailing closure syntax
+- Omit the parameter label when using trailing closure syntax
+- This applies to function calls, initializers, and method calls
+
+#### Examples
+
+```swift
+// ❌ Bad - Closure as labeled parameter
+Button(action: {
+    dismiss()
+}, label: {
+    Text("Close")
+})
+
+// ✅ Good - Trailing closure syntax
+Button {
+    dismiss()
+} label: {
+    Text("Close")
+}
+
+// ❌ Bad - Last parameter is closure but not using trailing syntax
+PaymentView(
+    bill: bill,
+    amount: amount,
+    onConfirm: {
+        processPayment()
+    }
+)
+
+// ✅ Good - Trailing closure for last parameter
+PaymentView(
+    bill: bill,
+    amount: amount
+) {
+    processPayment()
+}
+
+// ❌ Bad - Multiple trailing closures not properly formatted
+List {
+    ForEach(items, content: { item in
+        Text(item.name)
+    })
+}
+
+// ✅ Good - Multiple trailing closures
+List {
+    ForEach(items) { item in
+        Text(item.name)
+    }
+}
+
+// ✅ Good - Single trailing closure
+Task {
+    await loadData()
+}
+
+// ❌ Bad - Two closures at end, both as labeled parameters
+MyView(
+    title: "Hello",
+    onSave: {
+        save()
+    },
+    onCancel: {
+        cancel()
+    }
+)
+
+// ✅ Good - Two closures at end, use trailing closure for last, label for second-to-last
+MyView(
+    title: "Hello",
+    onSave: {
+        save()
+    }
+) {
+    cancel()
 }
 ```
 

@@ -9,13 +9,27 @@ import SwiftUI
 
 /// Displays a confirmation sheet for paying a bill.
 struct PaymentConfirmationView: View {
+    /// The current account balance.
+    @Binding var accountBalance: Decimal
+    
+    /// The bill to be paid.
     let bill: Bill
-    @Binding var accountBalance: Double
+    
+    /// Closure called when the payment is confirmed.
     let onConfirm: () -> Void
+    
+    /// Closure called when the view is dismissed.
     let onDismiss: () -> Void
+    
     @Environment(\.dismiss) private var dismiss
+    
+    /// Indicates whether a payment is currently being processed.
     @State private var isProcessing = false
+    
+    /// Indicates whether the success view should be shown.
     @State private var showSuccess = false
+    
+    /// The selected date for the payment.
     @State private var paymentDate = Date()
     
     /// Indicates whether the account balance is insufficient to cover the bill amount.
@@ -29,23 +43,21 @@ struct PaymentConfirmationView: View {
                 if showSuccess {
                     PaymentSuccessView(
                         bill: bill,
-                        paymentDate: paymentDate,
-                        onDismiss: {
-                            onDismiss()
-                            dismiss()
-                        }
-                    )
+                        paymentDate: paymentDate
+                    ) {
+                        onDismiss()
+                        dismiss()
+                    }
                 } else {
                     PaymentConfirmationContentView(
+                        paymentDate: $paymentDate,
                         bill: bill,
                         accountBalance: accountBalance,
                         hasInsufficientFunds: hasInsufficientFunds,
-                        paymentDate: $paymentDate,
-                        isProcessing: isProcessing,
-                        onConfirm: {
-                            processPayment()
-                        }
-                    )
+                        isProcessing: isProcessing
+                    ) {
+                        processPayment()
+                    }
                 }
             }
             .padding()
@@ -66,6 +78,7 @@ struct PaymentConfirmationView: View {
         }
     }
     
+    /// Processes the payment with a simulated delay and transitions to the success state.
     private func processPayment() {
         isProcessing = true
         
@@ -81,8 +94,8 @@ struct PaymentConfirmationView: View {
 
 #Preview("Sufficient Funds") {
     PaymentConfirmationView(
-        bill: Bill.samples[0],
         accountBalance: .constant(5000.00),
+        bill: Bill.samples[0],
         onConfirm: {
         },
         onDismiss: {
@@ -92,8 +105,8 @@ struct PaymentConfirmationView: View {
 
 #Preview("Insufficient Funds") {
     PaymentConfirmationView(
-        bill: Bill.samples[3],
         accountBalance: .constant(500.00),
+        bill: Bill.samples[3],
         onConfirm: {
         },
         onDismiss: {
