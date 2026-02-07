@@ -79,7 +79,20 @@ Swift automatically generates a memberwise initializer for structs that includes
 **Guidelines:**
 - Use property default values instead of default parameter values in custom initializers
 - Only write a custom initializer if you need custom logic (calculations, validation, etc.)
-- If a property should have a sensible default (like `id = UUID()` or `isPaid = false`), provide it as a property default value
+- If a property should have a sensible default (like `id = UUID()` or `paid = false`), provide it as a property default value
+
+### Boolean property naming
+
+**Use short, concise names for boolean properties.** Avoid prefixes like `is`, `has`, or `should` unless they significantly improve clarity.
+
+**Guidelines:**
+- Prefer `paid` over `isPaid`
+- Prefer `selected` over `isSelected`
+- Prefer `enabled` over `isEnabled`
+- Prefer `visible` over `isVisible`
+- Prefer `loading` over `isLoading`
+- Use prefixes like `has` only when the property indicates possession (e.g., `hasChildren`, `hasErrors`)
+- The property name alone should read naturally in context (e.g., `if bill.paid` reads better than `if bill.isPaid`)
 
 #### Examples
 
@@ -110,12 +123,12 @@ struct Account: Identifiable {
 struct Bill: Identifiable {
     let id: UUID
     let payee: String
-    var isPaid: Bool
+    var paid: Bool
     
-    init(id: UUID = UUID(), payee: String, isPaid: Bool = false) {
+    init(id: UUID = UUID(), payee: String, paid: Bool = false) {
         self.id = id
         self.payee = payee
-        self.isPaid = isPaid
+        self.paid = paid
     }
 }
 
@@ -123,7 +136,7 @@ struct Bill: Identifiable {
 struct Bill: Identifiable {
     let id = UUID()
     let payee: String
-    var isPaid = false
+    var paid = false
 }
 
 // ✅ Good - Custom initializer WITH custom logic (needed)
@@ -132,7 +145,7 @@ struct Bill: Identifiable {
     let payee: String
     let amount: Decimal
     let minimumDueAmount: Decimal
-    var isPaid = false
+    var paid = false
     
     init(
         payee: String,

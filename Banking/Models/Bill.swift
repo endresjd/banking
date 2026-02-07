@@ -25,44 +25,11 @@ struct Bill: Identifiable {
     let category: BillCategory
     
     /// Indicates whether the bill has been paid.
-    var isPaid = false
+    var paid = false
     
     /// The minimum amount that must be paid.
     var minimumDueAmount: Decimal {
         amount * 0.125
-    }
-}
-
-/// Categories for different types of bills.
-enum BillCategory: String, CaseIterable {
-    case utilities = "Utilities"
-    case internet = "Internet"
-    case phone = "Phone"
-    case rent = "Rent"
-    case insurance = "Insurance"
-    case subscription = "Subscription"
-    case credit = "Credit Card"
-    case other = "Other"
-    
-    var icon: String {
-        switch self {
-        case .utilities:
-            return "bolt.fill"
-        case .internet:
-            return "wifi"
-        case .phone:
-            return "phone.fill"
-        case .rent:
-            return "house.fill"
-        case .insurance:
-            return "shield.fill"
-        case .subscription:
-            return "star.fill"
-        case .credit:
-            return "creditcard.fill"
-        case .other:
-            return "doc.fill"
-        }
     }
 }
 
@@ -103,7 +70,8 @@ extension Bill {
             payee: "Streaming Service",
             amount: 15.99,
             dueDate: Date().addingTimeInterval(86400 * 2),
-            category: .subscription
+            category: .subscription,
+            paid: true
         )
     ]
 }

@@ -15,9 +15,9 @@ struct BillRow: View {
         HStack(spacing: 12) {
             Image(systemName: bill.category.icon)
                 .font(.title2)
-                .foregroundStyle(bill.isPaid ? .green : .blue)
+                .foregroundStyle(bill.paid ? .green : .blue)
                 .frame(width: 40, height: 40)
-                .background(bill.isPaid ? Color.green.opacity(0.1) : Color.blue.opacity(0.1))
+                .background(bill.paid ? Color.green.opacity(0.1) : Color.blue.opacity(0.1))
                 .clipShape(Circle())
             
             VStack(alignment: .leading, spacing: 4) {
@@ -34,14 +34,14 @@ struct BillRow: View {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(bill.amount, format: .currency(code: "USD"))
                     .font(.headline)
-                    .foregroundStyle(bill.isPaid ? .secondary : .primary)
+                    .foregroundStyle(bill.paid ? .secondary : .primary)
                 
                 Text(bill.dueDate, style: .date)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             
-            if bill.isPaid {
+            if bill.paid {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
                     .font(.title3)

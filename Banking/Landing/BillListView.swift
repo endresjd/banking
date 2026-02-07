@@ -25,7 +25,7 @@ struct BillListView: View {
     var filteredBills: [Bill] {
         bills
             .filter {
-                showPaidBills ? true : !$0.isPaid
+                showPaidBills ? true : !$0.paid
             }
             .sorted {
                 $0.dueDate < $1.dueDate
@@ -36,7 +36,7 @@ struct BillListView: View {
     var unpaidTotal: Decimal {
         bills
             .filter {
-                !$0.isPaid
+                !$0.paid
             }
             .reduce(0) {
                 $0 + $1.amount
@@ -54,43 +54,22 @@ struct BillListView: View {
                 
                 if !showPaidBills && unpaidTotal > 0 {
                     Section {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Total Unpaid")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            
-                            Text(unpaidTotal, format: .currency(code: "USD"))
-                                .font(.title)
-                                .bold()
-                        }
-                        .padding(.vertical, 8)
+                        UnpaidTotalCard(unpaidTotal: unpaidTotal)
                     }
                 }
                 
-                Section {
-                    ForEach(filteredBills) { bill in
-                        Button {
-                            if !bill.isPaid {
-                                selectedBill = bill
-                            }
-                        } label: {
-                            BillRow(bill: bill)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(bill.isPaid)
+                BillListSection(
+                    bills: filteredBills,
+                    showPaidBills: showPaidBills,
+                    onBillTapped: { bill in
+                        selectedBill = bill
                     }
-                } header: {
-                    Text(showPaidBills ? "All Bills" : "Upcoming Bills")
-                }
+                )
             }
             .navigationTitle("Banking")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showPaidBills.toggle()
-                    } label: {
-                        Image(systemName: showPaidBills ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
-                    }
+                    BillFilterButton(showPaidBills: $showPaidBills)
                 }
             }
             .fullScreenCover(item: $selectedBill) { bill in
@@ -115,7 +94,7 @@ struct BillListView: View {
             return
         }
         
-        bills[index].isPaid = true
+        bills[index].paid = true
         accountBalance -= bill.amount
     }
 }
