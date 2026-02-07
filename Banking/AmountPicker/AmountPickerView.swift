@@ -20,22 +20,11 @@ struct AmountPickerView: View {
     
     /// Closure called when the view is dismissed.
     let onDismiss: () -> Void
-    
-    
+
     var body: some View {
         NavigationStack {
             VStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Choose Amount")
-                        .font(.title2)
-                        .bold()
-                    
-                    Text("Make payments by \(bill.dueDate.formatted(date: .abbreviated, time: .omitted)).")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
+                AmountPickerHeader(bill: bill)
                 
                 CircularAmountPicker(
                     selectedAmount: $selectedAmount,
@@ -46,65 +35,13 @@ struct AmountPickerView: View {
                     bottomLabel: "MIN DUE \(bill.minimumDueAmount.formatted(.currency(code: "USD")))"
                 )
                 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Pay January Balance")
-                        .font(.headline)
-                        .fixedSize(horizontal: false, vertical: true)
-                    
-                    Text("Paying your monthly balance is recommended to help keep you financially healthy and avoid interest charges.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    
-                    VStack(spacing: 12) {
-                        Button {
-                        } label: {
-                            HStack {
-                                Image(systemName: "info.circle.fill")
-                                Text("Learn More")
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.subheadline)
-                        }
-                        
-                        Button {
-                        } label: {
-                            HStack {
-                                Image(systemName: "keyboard.chevron.compact.down.fill")
-                                Text("Other Amount")
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .font(.subheadline)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-                .padding(.bottom)
-
-                HStack(spacing: 16) {
-                    Button {
-                    } label: {
-                        Text("Schedule")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.large)
-                    
-                    Button {
-                        onConfirm()
-                    } label: {
-                        Text("Pay \(selectedAmount.formatted(.currency(code: "USD")))")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.black)
-                    .controlSize(.large)
-                }
-                .padding(.horizontal)
-                .padding(.bottom, 24)
+                AmountPickerInfoCard()
+                
+                AmountPickerActionButtons(
+                    selectedAmount: selectedAmount,
+                    onConfirm: onConfirm
+                )
             }
-            .padding(.top, 12)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

@@ -27,11 +27,17 @@ struct CircularAmountPicker: View {
     /// The label to display at the bottom of the circle.
     let bottomLabel: String
     
-    @State private var dragAngle: Double = 0
-    @State private var isDragging = false
+    /// The current drag angle in degrees.
+    @State private var dragAngle = 0.0
     
-    private let circleSize: CGFloat = 280
-    private let strokeWidth: CGFloat = 24
+    /// Indicates whether the user is currently dragging the handle.
+    @State private var dragging = false
+    
+    /// The diameter of the circular picker in points.
+    private let circleSize = 280.0
+    
+    /// The width of the progress stroke in points.
+    private let strokeWidth = 24.0
     
     /// The progress value from 0 to 1 representing the selected amount.
     private var progress: Double {
@@ -140,11 +146,11 @@ struct CircularAmountPicker: View {
                 .gesture(
                     DragGesture(coordinateSpace: .named("circularPicker"))
                         .onChanged { value in
-                            isDragging = true
+                            dragging = true
                             updateAmount(for: value.location)
                         }
                         .onEnded { _ in
-                            isDragging = false
+                            dragging = false
                         }
                 )
         }
