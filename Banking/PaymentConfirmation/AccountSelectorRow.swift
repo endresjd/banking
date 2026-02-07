@@ -24,12 +24,7 @@ struct AccountSelectorRow: View {
                     Button {
                         selectedAccount = account
                     } label: {
-                        VStack(alignment: .leading) {
-                            Text(account.name)
-                            Text(account.balance, format: .currency(code: "USD"))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                        Text("\(account.name)\n\(account.balance.formatted(.currency(code: "USD")))")
                     }
                 }
             } label: {
