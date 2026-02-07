@@ -47,7 +47,7 @@ struct PaymentConfirmationContentView: View {
         self.bill = bill
         self.isProcessing = isProcessing
         self.onConfirm = onConfirm
-        self._paymentAmount = State(initialValue: bill.amount)
+        self._paymentAmount = State(initialValue: bill.minimumDueAmount)
     }
 
     /// Indicates whether the selected account has insufficient funds for the payment amount.

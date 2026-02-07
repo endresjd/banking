@@ -18,18 +18,39 @@ struct BillListView: View {
     /// Indicates whether to show paid bills in the list.
     @State private var showPaidBills = false
     
+    /// The currently selected sort option.
+    @State private var sortOption = BillSortOption.dueDate
+    
+    /// Whether to sort in ascending order.
+    @State private var ascending = true
+    
     /// The currently selected bill for payment.
     @State private var selectedBill: Bill?
     
-    /// Returns the filtered list of bills based on payment status and sorted by due date.
+    /// Returns the filtered and sorted list of bills.
     var filteredBills: [Bill] {
-        bills
-            .filter {
-                showPaidBills ? true : !$0.paid
+        let filtered = bills.filter {
+            showPaidBills ? true : !$0.paid
+        }
+        
+        return filtered.sorted { first, second in
+            let comparison: Bool
+            
+            switch sortOption {
+            case .dueDate:
+                comparison = first.dueDate < second.dueDate
+            case .payee:
+                comparison = first.payee.localizedStandardCompare(second.payee) == .orderedAscending
+            case .amount:
+                comparison = first.amount < second.amount
+            case .category:
+                comparison = first.category.rawValue.localizedStandardCompare(second.category.rawValue) == .orderedAscending
+            case .paid:
+                comparison = !first.paid && second.paid
             }
-            .sorted {
-                $0.dueDate < $1.dueDate
-            }
+            
+            return ascending ? comparison : !comparison
+        }
     }
     
     /// Returns the total amount of unpaid bills.
@@ -68,6 +89,10 @@ struct BillListView: View {
             }
             .navigationTitle("Banking")
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    BillSortPicker(sortOption: $sortOption, ascending: $ascending)
+                }
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     BillFilterButton(showPaidBills: $showPaidBills)
                 }

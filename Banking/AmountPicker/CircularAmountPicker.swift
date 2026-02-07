@@ -74,7 +74,7 @@ struct CircularAmountPicker: View {
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    Color.green,
+                    Color.blue,
                     style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round)
                 )
                 .frame(width: circleSize, height: circleSize)

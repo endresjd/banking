@@ -43,7 +43,7 @@ struct AmountPickerView: View {
                     minimumDueAmount: bill.minimumDueAmount,
                     maximumAmount: bill.amount,
                     topLabel: "CARD BALANCE \(bill.amount.formatted(.currency(code: "USD")))",
-                    bottomLabel: "NO INTEREST CHARGES"
+                    bottomLabel: "MIN DUE \(bill.minimumDueAmount.formatted(.currency(code: "USD")))"
                 )
                 
                 VStack(alignment: .leading, spacing: 12) {
