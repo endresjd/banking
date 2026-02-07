@@ -52,8 +52,6 @@ struct PaymentConfirmationView: View {
                     PaymentConfirmationContentView(
                         paymentDate: $paymentDate,
                         bill: bill,
-                        accountBalance: accountBalance,
-                        hasInsufficientFunds: hasInsufficientFunds,
                         isProcessing: isProcessing
                     ) {
                         processPayment()

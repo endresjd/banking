@@ -67,6 +67,106 @@ struct PaymentView: View {
 
 4 spaces, no tabs.
 
+### Struct initializers
+
+**Prefer Swift's auto-generated memberwise initializer.** Only create a custom initializer when you need custom logic that can't be achieved with property default values.
+
+Swift automatically generates a memberwise initializer for structs that includes all stored properties. This initializer is:
+- Less code to maintain
+- Automatically updated when properties change
+- Less prone to bugs
+
+**Guidelines:**
+- Use property default values instead of default parameter values in custom initializers
+- Only write a custom initializer if you need custom logic (calculations, validation, etc.)
+- If a property should have a sensible default (like `id = UUID()` or `isPaid = false`), provide it as a property default value
+
+#### Examples
+
+```swift
+// ❌ Bad - Unnecessary custom initializer
+struct Account: Identifiable {
+    let id: UUID
+    let name: String
+    var balance: Decimal
+    
+    init(id: UUID = UUID(), name: String, balance: Decimal) {
+        self.id = id
+        self.name = name
+        self.balance = balance
+    }
+}
+
+// ✅ Good - Use auto-generated initializer with property defaults
+struct Account: Identifiable {
+    let id = UUID()
+    let name: String
+    var balance: Decimal
+}
+
+// Usage: Account(name: "Checking", balance: 1000)
+
+// ❌ Bad - Default parameter values in custom initializer
+struct Bill: Identifiable {
+    let id: UUID
+    let payee: String
+    var isPaid: Bool
+    
+    init(id: UUID = UUID(), payee: String, isPaid: Bool = false) {
+        self.id = id
+        self.payee = payee
+        self.isPaid = isPaid
+    }
+}
+
+// ✅ Good - Property defaults, no initializer needed
+struct Bill: Identifiable {
+    let id = UUID()
+    let payee: String
+    var isPaid = false
+}
+
+// ✅ Good - Custom initializer WITH custom logic (needed)
+struct Bill: Identifiable {
+    let id = UUID()
+    let payee: String
+    let amount: Decimal
+    let minimumDueAmount: Decimal
+    var isPaid = false
+    
+    init(
+        payee: String,
+        amount: Decimal,
+        minimumDueAmount: Decimal? = nil
+    ) {
+        self.payee = payee
+        self.amount = amount
+        // Custom logic: calculate minimum as 12.5% of amount if not provided
+        self.minimumDueAmount = minimumDueAmount ?? (amount * 0.125)
+    }
+}
+
+// ❌ Bad - Custom initializer that just assigns values
+struct User {
+    let name: String
+    let email: String
+    let role: UserRole
+    
+    init(name: String, email: String, role: UserRole = .member) {
+        self.name = name
+        self.email = email
+        self.role = role
+    }
+}
+
+// ✅ Good - Property default instead
+struct User {
+    let name: String
+    let email: String
+    let role: UserRole = .member
+}
+```
+
 ### Code comments & code documentation
 
 Use triple slash (`///`) for **API documentation only** - documenting types, 
@@ -168,6 +268,11 @@ Omit explicit type annotations when the type can be clearly inferred from the as
 - It significantly improves code clarity
 - Working with protocols or generic constraints
 
+**Prefer type information on the right-hand side:**
+When you need to specify a type, prefer putting the type information on the right-hand side using initializers rather than explicit type annotations on the left. This keeps the code more consistent and easier to read.
+
+Use `Type(value)` initializer syntax instead of `variable: Type = value` annotation syntax whenever possible.
+
 #### Examples
 
 ```swift
@@ -186,8 +291,29 @@ let items = ["one", "two", "three"]
 // ❌ Bad - Type needed but omitted (ambiguous)
 let value = 42.0  // Is this Double or CGFloat?
 
-// ✅ Good - Explicit when needed
+// ❌ Bad - Type annotation on left side
 let value: CGFloat = 42.0
+
+// ✅ Good - Type on right side using initializer
+let value = CGFloat(42.0)
+
+// ❌ Bad - Explicit type annotation on left
+let accountBalance: Decimal = 50.00
+let count: Int = 0
+let items: [String] = []
+
+// ✅ Good - Type on right side using initializer
+let accountBalance = Decimal(50.00)
+let count = Int(0)
+let items = [String]()
+
+// ❌ Bad - Type annotation when initializer would work
+let frame: CGRect = CGRect(x: 0, y: 0, width: 100, height: 100)
+let color: UIColor = UIColor.red
+
+// ✅ Good - Let type inference work
+let frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+let color = UIColor.red
 
 // ✅ Good - Type inferred from initializer
 let date = Date()
@@ -401,7 +527,9 @@ MyView(
 
 ### Vertical spacing
 
-Keep logical blocks together.  vars and lets should not have blank lines between then unless they span multiple lines.  All logic should be seperated by at least one blank line. Try to group lets and vars together.
+Keep logical blocks together. vars and lets should not have blank lines between them unless they span multiple lines. All logic should be separated by at least one blank line. Try to group lets and vars together.
+
+**NEVER use more than one consecutive blank line.** There should never be two or more blank lines in a row anywhere in the code.
 
 #### Examples
 
@@ -420,7 +548,7 @@ struct ExampleView: View {
 
 ### `#Preview` spacing
 
-Always include a blank line before any `#Preview` block.
+**Always include a blank line before any `#Preview` block.** This includes when there are multiple previews - each preview must be preceded by a blank line, including the second, third, etc. preview blocks.
 
 ### `#Preview` placement
 

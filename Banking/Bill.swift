@@ -10,16 +10,13 @@ import Foundation
 /// Represents a bill that can be paid through the banking app.
 struct Bill: Identifiable {
     /// Unique identifier for the bill.
-    let id: UUID
+    let id = UUID()
     
     /// The name of the payee.
     let payee: String
     
     /// The amount due for this bill.
     let amount: Decimal
-    
-    /// The minimum amount that must be paid.
-    let minimumDueAmount: Decimal
     
     /// The date when the bill is due.
     let dueDate: Date
@@ -28,24 +25,11 @@ struct Bill: Identifiable {
     let category: BillCategory
     
     /// Indicates whether the bill has been paid.
-    var isPaid: Bool
+    var isPaid = false
     
-    init(
-        id: UUID = UUID(),
-        payee: String,
-        amount: Decimal,
-        minimumDueAmount: Decimal? = nil,
-        dueDate: Date,
-        category: BillCategory,
-        isPaid: Bool = false
-    ) {
-        self.id = id
-        self.payee = payee
-        self.amount = amount
-        self.minimumDueAmount = minimumDueAmount ?? (amount * 0.125)
-        self.dueDate = dueDate
-        self.category = category
-        self.isPaid = isPaid
+    /// The minimum amount that must be paid.
+    var minimumDueAmount: Decimal {
+        amount * 0.125
     }
 }
 
@@ -119,8 +103,7 @@ extension Bill {
             payee: "Streaming Service",
             amount: 15.99,
             dueDate: Date().addingTimeInterval(86400 * 2),
-            category: .subscription,
-            isPaid: true
+            category: .subscription
         )
     ]
 }
