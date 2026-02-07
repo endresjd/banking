@@ -24,29 +24,58 @@ struct AmountPickerView: View {
     /// The currently selected account for payment.
     @State private var selectedAccount = Account.samples[0]
     
+    /// The selected payment date.
+    @State private var paymentDate = Date()
+    
+    /// Indicates whether the selected account has insufficient funds for the minimum due.
+    private var insufficientFundsForMinimum: Bool {
+        selectedAccount.balance < bill.minimumDueAmount
+    }
+    
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(alignment: .leading) {
                 AmountPickerHeader(bill: bill)
+                    .padding(.bottom)
 
-                AccountSelectorRow(selectedAccount: $selectedAccount)
-                    .padding()
+                VStack(alignment: .leading, spacing: 16) {
+                    AccountSelectorRow(selectedAccount: $selectedAccount)
 
-                CircularAmountPicker(
-                    selectedAmount: $selectedAmount,
-                    minimumAmount: 0,
-                    minimumDueAmount: bill.minimumDueAmount,
-                    maximumAmount: bill.amount,
-                    topLabel: "CARD BALANCE \(bill.amount.formatted(.currency(code: "USD")))",
-                    bottomLabel: "MIN DUE \(bill.minimumDueAmount.formatted(.currency(code: "USD")))"
-                )
+                    Divider()
+                    
+                    PaymentDateRow(paymentDate: $paymentDate)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.horizontal)
 
-                AmountPickerInfoCard()
+                if insufficientFundsForMinimum {
+                    InsufficientFundsErrorBanner(minimumDueAmount: bill.minimumDueAmount)
+                } else {
+                    Text("Choose a Payment Amount")
+                        .font(.title2)
+                        .bold()
+                        .padding()
 
-                AmountPickerActionButtons(
-                    selectedAmount: selectedAmount,
-                    onConfirm: onConfirm
-                )
+                    CircularAmountPicker(
+                        selectedAmount: $selectedAmount,
+                        minimumAmount: 0,
+                        minimumDueAmount: bill.minimumDueAmount,
+                        maximumAmount: min(bill.amount, selectedAccount.balance)
+                    )
+
+//                    AmountPickerInfoCard()
+                }
+
+                if !insufficientFundsForMinimum {
+                    AmountPickerActionButtons(
+                        selectedAmount: selectedAmount,
+                        onConfirm: onConfirm
+                    )
+                }
+
+                Spacer()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

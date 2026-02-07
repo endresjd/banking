@@ -17,13 +17,13 @@ struct AmountPickerActionButtons: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Button {
-            } label: {
-                Text("Schedule")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.large)
+//            Button {
+//            } label: {
+//                Text("Schedule")
+//                    .frame(maxWidth: .infinity)
+//            }
+//            .buttonStyle(.bordered)
+//            .controlSize(.large)
             
             Button {
                 onConfirm()

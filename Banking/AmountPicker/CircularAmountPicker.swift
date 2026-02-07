@@ -22,10 +22,14 @@ struct CircularAmountPicker: View {
     let maximumAmount: Decimal
     
     /// The label to display at the top of the circle.
-    let topLabel: String
+    private var topLabel: String {
+        "CARD BALANCE \(maximumAmount.formatted(.currency(code: "USD")))"
+    }
     
     /// The label to display at the bottom of the circle.
-    let bottomLabel: String
+    private var bottomLabel: String {
+        "MIN DUE \(minimumDueAmount.formatted(.currency(code: "USD")))"
+    }
     
     /// The current drag angle in degrees.
     @State private var dragAngle = 0.0
@@ -66,6 +70,11 @@ struct CircularAmountPicker: View {
         return Double("\(ratio)") ?? 0
     }
     
+    /// The color of the progress arc, pink when at minimum due, blue otherwise.
+    private var progressColor: Color {
+        selectedAmount == minimumDueAmount ? .pink : .blue
+    }
+    
     var body: some View {
         ZStack {
             // Background circle
@@ -80,7 +89,7 @@ struct CircularAmountPicker: View {
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    Color.blue,
+                    progressColor,
                     style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round)
                 )
                 .frame(width: circleSize, height: circleSize)
@@ -209,9 +218,7 @@ struct CircularAmountPicker: View {
         selectedAmount: $selectedAmount,
         minimumAmount: 0,
         minimumDueAmount: 39.60,
-        maximumAmount: 316.98,
-        topLabel: "CARD BALANCE $316.98",
-        bottomLabel: "NO INTEREST CHARGES"
+        maximumAmount: 316.98
     )
 }
 

@@ -13,24 +13,10 @@ struct PaymentDateCard: View {
     @Binding var paymentDate: Date
     
     var body: some View {
-        HStack {
-            Text("Payment Date")
-                .foregroundStyle(.secondary)
-            
-            Spacer()
-            
-            DatePicker(
-                "Select payment date",
-                selection: $paymentDate,
-                in: Date()...,
-                displayedComponents: [.date]
-            )
-            .labelsHidden()
-            .datePickerStyle(.compact)
-        }
-        .padding()
-        .background(Color(.systemGray6))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        PaymentDateRow(paymentDate: $paymentDate)
+            .padding()
+            .background(Color(.systemGray6))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
 
