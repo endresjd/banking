@@ -20,12 +20,18 @@ struct AmountPickerView: View {
     
     /// Closure called when the view is dismissed.
     let onDismiss: () -> Void
-
+    
+    /// The currently selected account for payment.
+    @State private var selectedAccount = Account.samples[0]
+    
     var body: some View {
         NavigationStack {
             VStack {
                 AmountPickerHeader(bill: bill)
-                
+
+                AccountSelectorRow(selectedAccount: $selectedAccount)
+                    .padding()
+
                 CircularAmountPicker(
                     selectedAmount: $selectedAmount,
                     minimumAmount: 0,
@@ -34,9 +40,9 @@ struct AmountPickerView: View {
                     topLabel: "CARD BALANCE \(bill.amount.formatted(.currency(code: "USD")))",
                     bottomLabel: "MIN DUE \(bill.minimumDueAmount.formatted(.currency(code: "USD")))"
                 )
-                
+
                 AmountPickerInfoCard()
-                
+
                 AmountPickerActionButtons(
                     selectedAmount: selectedAmount,
                     onConfirm: onConfirm

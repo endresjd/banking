@@ -14,7 +14,7 @@ struct AmountPickerHeader: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Choose Amount")
+            Text("Make a payment")
                 .font(.title2)
                 .bold()
             
