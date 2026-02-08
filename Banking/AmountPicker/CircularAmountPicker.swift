@@ -21,6 +21,14 @@ struct CircularAmountPicker: View {
     /// The maximum amount that can be selected.
     let maximumAmount: Decimal
     
+    /// The maximum amount the slider can be dragged to (defaults to maximumAmount if not specified).
+    let dragLimit: Decimal?
+    
+    /// The effective drag limit, constrained to maximumAmount.
+    private var effectiveDragLimit: Decimal {
+        min(dragLimit ?? maximumAmount, maximumAmount)
+    }
+    
     /// The label to display at the top of the circle.
     private var topLabel: String {
         "CARD BALANCE \(maximumAmount.formatted(.currency(code: "USD")))"
@@ -73,6 +81,19 @@ struct CircularAmountPicker: View {
     /// The color of the progress arc, pink when at minimum due, blue otherwise.
     private var progressColor: Color {
         selectedAmount == minimumDueAmount ? .pink : .blue
+    }
+    
+    /// The progress value for the drag limit (0 to 1).
+    private var dragLimitProgress: Double {
+        guard maximumAmount > minimumAmount else {
+            return 1.0
+        }
+        
+        let range = maximumAmount - minimumAmount
+        let current = effectiveDragLimit - minimumAmount
+        let ratio = current / range
+        
+        return Double("\(ratio)") ?? 1.0
     }
     
     var body: some View {
@@ -139,6 +160,18 @@ struct CircularAmountPicker: View {
                 .frame(width: 12, height: 12)
                 .shadow(color: .black.opacity(0.15), radius: 2, x: 0, y: 1)
                 .offset(x: 0, y: -circleSize / 2)
+            
+            // Drag limit indicator (small filled circle, only shown if drag limit differs from maximum)
+            if effectiveDragLimit < maximumAmount {
+                Circle()
+                    .fill(Color.black)
+                    .frame(width: 12, height: 12)
+                    .shadow(color: .black.opacity(0.15), radius: 2, x: 0, y: 1)
+                    .offset(
+                        x: cos((dragLimitProgress * 360 - 90) * .pi / 180) * circleSize / 2,
+                        y: sin((dragLimitProgress * 360 - 90) * .pi / 180) * circleSize / 2
+                    )
+            }
             
             // End handle (at progress point with checkmark)
             Circle()
@@ -207,7 +240,7 @@ struct CircularAmountPicker: View {
         let progressDecimal = Decimal(newProgress)
         let amount = minimumAmount + (progressDecimal * range)
         
-        selectedAmount = min(max(amount, minimumAmount), maximumAmount)
+        selectedAmount = min(max(amount, minimumAmount), effectiveDragLimit)
     }
 }
 
@@ -218,7 +251,8 @@ struct CircularAmountPicker: View {
         selectedAmount: $selectedAmount,
         minimumAmount: 0,
         minimumDueAmount: 39.60,
-        maximumAmount: 316.98
+        maximumAmount: 316.98,
+        dragLimit: 300.0
     )
 }
 

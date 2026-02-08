@@ -62,7 +62,8 @@ struct AmountPickerView: View {
                         selectedAmount: $selectedAmount,
                         minimumAmount: 0,
                         minimumDueAmount: bill.minimumDueAmount,
-                        maximumAmount: min(bill.amount, selectedAccount.balance)
+                        maximumAmount: bill.amount,
+                        dragLimit: selectedAccount.balance
                     )
 
 //                    AmountPickerInfoCard()

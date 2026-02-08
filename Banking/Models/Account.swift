@@ -25,6 +25,7 @@ struct Account: Identifiable, Hashable {
         Account(name: "Checking Account", accountType: .checking, balance: 5432.50),
         Account(name: "Savings Account", accountType: .savings, balance: 12500.00),
         Account(name: "Emergency Fund", accountType: .savings, balance: 8000.00),
-        Account(name: "Small Account", accountType: .savings, balance: 5.00)
+        Account(name: "Small Account", accountType: .savings, balance: 5.00),
+        Account(name: "Medium Account", accountType: .savings, balance: 100.00)
     ]
 }
