@@ -65,9 +65,17 @@ struct PaymentConfirmationView: View {
 //                    }
                 }
             }
-            .navigationTitle("Confirm Payment")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 8) {
+                        Image(systemName: bill.category.icon)
+                            .foregroundStyle(.blue)
+                        Text(bill.payee)
+                            .font(.headline)
+                    }
+                }
+                
                 if !showSuccess {
                     ToolbarItem(placement: .cancellationAction) {
                         Button(role: .cancel) {

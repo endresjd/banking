@@ -40,8 +40,8 @@ struct AmountPickerView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .center) {
-                PaymentBillHeader(bill: bill)
-                    .padding(.vertical)
+//                PaymentBillHeader(bill: bill)
+//                    .padding(.vertical)
 
                 AmountPickerDetailsCard(
                     selectedAccount: $selectedAccount,
