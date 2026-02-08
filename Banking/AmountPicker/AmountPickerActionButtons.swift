@@ -32,7 +32,8 @@ struct AmountPickerActionButtons: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.black)
+            .tint(.primary)
+            .foregroundStyle(Color(.systemBackground))
             .controlSize(.large)
         }
         .padding(.horizontal)

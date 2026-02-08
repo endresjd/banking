@@ -12,9 +12,6 @@ struct CircularAmountPicker: View {
     /// The currently selected amount.
     @Binding var selectedAmount: Decimal
     
-    /// The minimum amount that can be selected.
-    let minimumAmount: Decimal
-    
     /// The minimum due amount that must be paid.
     let minimumDueAmount: Decimal
     
@@ -53,12 +50,12 @@ struct CircularAmountPicker: View {
     
     /// The progress value from 0 to 1 representing the selected amount.
     private var progress: Double {
-        guard maximumAmount > minimumAmount else {
+        guard maximumAmount > .zero else {
             return 0
         }
         
-        let range = maximumAmount - minimumAmount
-        let current = selectedAmount - minimumAmount
+        let range = maximumAmount
+        let current = selectedAmount
         let ratio = current / range
         
         return Double("\(ratio)") ?? 0
@@ -71,8 +68,8 @@ struct CircularAmountPicker: View {
     
     /// The progress value for the minimum due amount (0 to 1).
     private var minimumDueProgress: Double {
-        let range = maximumAmount - minimumAmount
-        let current = minimumDueAmount - minimumAmount
+        let range = maximumAmount
+        let current = minimumDueAmount
         let ratio = current / range
         
         return Double("\(ratio)") ?? 0
@@ -85,12 +82,12 @@ struct CircularAmountPicker: View {
     
     /// The progress value for the drag limit (0 to 1).
     private var dragLimitProgress: Double {
-        guard maximumAmount > minimumAmount else {
+        guard maximumAmount > .zero else {
             return 1.0
         }
         
-        let range = maximumAmount - minimumAmount
-        let current = effectiveDragLimit - minimumAmount
+        let range = maximumAmount
+        let current = effectiveDragLimit
         let ratio = current / range
         
         return Double("\(ratio)") ?? 1.0
@@ -233,8 +230,8 @@ struct CircularAmountPicker: View {
         }
         
         // Calculate the angle for minimum due amount
-        let totalRange = maximumAmount - minimumAmount
-        let minimumDueProgress = totalRange > 0 ? Double("\((minimumDueAmount - minimumAmount) / totalRange)") ?? 0 : 0
+        let totalRange = maximumAmount
+        let minimumDueProgress = totalRange > 0 ? Double("\(minimumDueAmount / totalRange)") ?? 0 : 0
         let minimumDueAngle = minimumDueProgress * 360
         
         // Only clamp in the narrow dead zone at the top (355° to minimum due angle)
@@ -253,20 +250,19 @@ struct CircularAmountPicker: View {
         }
         
         let newProgress = angle / 360
-        let range = maximumAmount - minimumAmount
+        let range = maximumAmount
         let progressDecimal = Decimal(newProgress)
-        let amount = minimumAmount + (progressDecimal * range)
+        let amount = progressDecimal * range
         
-        selectedAmount = min(max(amount, minimumAmount), effectiveDragLimit)
+        selectedAmount = min(max(amount, .zero), effectiveDragLimit)
     }
 }
 
 #Preview {
-    @Previewable @State var selectedAmount: Decimal = 277.39
+    @Previewable @State var selectedAmount = Decimal(277.39)
 
     CircularAmountPicker(
         selectedAmount: $selectedAmount,
-        minimumAmount: 0,
         minimumDueAmount: 39.60,
         maximumAmount: 316.98,
         dragLimit: 300.0

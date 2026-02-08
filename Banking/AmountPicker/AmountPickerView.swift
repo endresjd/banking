@@ -54,7 +54,6 @@ struct AmountPickerView: View {
                 } else {
                     CircularAmountPicker(
                         selectedAmount: $selectedAmount,
-                        minimumAmount: 0,
                         minimumDueAmount: bill.minimumDueAmount,
                         maximumAmount: bill.amount,
                         dragLimit: selectedAccount.balance
