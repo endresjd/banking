@@ -60,7 +60,7 @@ struct AmountPickerView: View {
                         dragLimit: selectedAccount.balance
                     )
 
-                    //                    AmountPickerInfoCard()
+//                    AmountPickerInfoCard()
                 }
 
                 if !insufficientFundsForMinimum {

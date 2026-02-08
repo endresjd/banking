@@ -55,14 +55,6 @@ struct PaymentConfirmationView: View {
                             processPayment()
                         }
                     )
-
-//                    PaymentConfirmationContentView(
-//                        paymentDate: $paymentDate,
-//                        bill: bill,
-//                        isProcessing: isProcessing
-//                    ) {
-//                        processPayment()
-//                    }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
