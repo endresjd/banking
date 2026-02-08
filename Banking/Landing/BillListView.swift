@@ -67,11 +67,11 @@ struct BillListView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    AccountBalanceView(balance: accountBalance)
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                }
+//                Section {
+//                    AccountBalanceView(balance: accountBalance)
+//                        .listRowInsets(EdgeInsets())
+//                        .listRowBackground(Color.clear)
+//                }
                 
                 if !showPaidBills && unpaidTotal > 0 {
                     Section {

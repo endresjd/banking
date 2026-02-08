@@ -59,7 +59,7 @@ struct PaymentConfirmationContentView: View {
         ScrollView {
             PaymentBillHeader(bill: bill)
             
-            PaymentDetailsCard(
+            OldPaymentDetailsCard(
                 bill: bill,
                 selectedAccount: $selectedAccount,
                 paymentAmount: $paymentAmount,

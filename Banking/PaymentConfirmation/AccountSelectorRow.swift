@@ -13,12 +13,7 @@ struct AccountSelectorRow: View {
     @Binding var selectedAccount: Account
     
     var body: some View {
-        HStack {
-            Text("Account")
-                .foregroundStyle(.secondary)
-            
-            Spacer()
-            
+        LabeledContent("Account") {
             Menu {
                 ForEach(Account.samples) { account in
                     Button {
@@ -30,7 +25,6 @@ struct AccountSelectorRow: View {
             } label: {
                 HStack(spacing: 4) {
                     Text(selectedAccount.name)
-                        .foregroundStyle(.primary)
                     
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.caption2)

@@ -49,16 +49,22 @@ struct PaymentConfirmationView: View {
                         dismiss()
                     }
                 } else {
-                    PaymentConfirmationContentView(
-                        paymentDate: $paymentDate,
-                        bill: bill,
-                        isProcessing: isProcessing
-                    ) {
-                        processPayment()
-                    }
+                    AmountPickerView(
+                        bill: Bill.samples[0],
+                        onConfirm: {
+                            processPayment()
+                        }
+                    )
+
+//                    PaymentConfirmationContentView(
+//                        paymentDate: $paymentDate,
+//                        bill: bill,
+//                        isProcessing: isProcessing
+//                    ) {
+//                        processPayment()
+//                    }
                 }
             }
-            .padding()
             .navigationTitle("Confirm Payment")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

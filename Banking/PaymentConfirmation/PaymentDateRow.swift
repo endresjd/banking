@@ -13,12 +13,7 @@ struct PaymentDateRow: View {
     @Binding var paymentDate: Date
     
     var body: some View {
-        HStack {
-            Text("Payment Date")
-                .foregroundStyle(.secondary)
-            
-            Spacer()
-            
+        LabeledContent("Payment Date") {
             DatePicker(
                 "Select payment date",
                 selection: $paymentDate,

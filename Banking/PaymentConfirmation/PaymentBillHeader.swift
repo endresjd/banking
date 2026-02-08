@@ -13,20 +13,21 @@ struct PaymentBillHeader: View {
     let bill: Bill
     
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: bill.category.icon)
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+        VStack(spacing: 8) {
+            HStack {
+                Image(systemName: bill.category.icon)
+                    .font(.system(size: 30))
+                    .foregroundStyle(.blue)
+
+                Text(bill.payee)
+                    .font(.title2)
+                    .bold()
+            }
             
-            Text(bill.payee)
-                .font(.title2)
-                .bold()
-            
-            Text(bill.category.rawValue)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+//            Text(bill.category.rawValue)
+//                .font(.subheadline)
+//                .foregroundStyle(.secondary)
         }
-        .padding(.top, 32)
     }
 }
 

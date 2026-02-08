@@ -46,8 +46,8 @@ struct CircularAmountPicker: View {
     @State private var dragging = false
     
     /// The diameter of the circular picker in points.
-    private let circleSize = 280.0
-    
+    private let circleSize = 250.0
+
     /// The width of the progress stroke in points.
     private let strokeWidth = 24.0
     
@@ -115,6 +115,18 @@ struct CircularAmountPicker: View {
                 )
                 .frame(width: circleSize, height: circleSize)
                 .rotationEffect(.degrees(-90))
+            
+            // Red arc from drag limit to maximum (only shown if drag limit differs from maximum)
+            if effectiveDragLimit < maximumAmount {
+                Circle()
+                    .trim(from: dragLimitProgress, to: 1.0)
+                    .stroke(
+                        Color.red.opacity(0.5),
+                        style: StrokeStyle(lineWidth: strokeWidth, lineCap: .round)
+                    )
+                    .frame(width: circleSize, height: circleSize)
+                    .rotationEffect(.degrees(-90))
+            }
             
             // Top label (curved like a frown - arc bending down)
             CurvedText(
@@ -198,6 +210,11 @@ struct CircularAmountPicker: View {
         }
         .frame(width: circleSize + 100, height: circleSize + 100)
         .coordinateSpace(name: "circularPicker")
+        .onChange(of: effectiveDragLimit) { oldValue, newValue in
+            if selectedAmount > newValue {
+                selectedAmount = newValue
+            }
+        }
     }
     
     /// Updates the selected amount based on the drag location.
@@ -254,5 +271,6 @@ struct CircularAmountPicker: View {
         maximumAmount: 316.98,
         dragLimit: 300.0
     )
+    .border(Color.black)
 }
 

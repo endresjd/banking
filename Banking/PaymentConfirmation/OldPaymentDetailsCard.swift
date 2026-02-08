@@ -1,5 +1,5 @@
 //
-//  PaymentDetailsCard.swift
+//  OldPaymentDetailsCard.swift
 //  Banking
 //
 //  Created by John Endres on 2/5/26.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A card displaying payment details including account, amount, and balance information.
-struct PaymentDetailsCard: View {
+struct OldPaymentDetailsCard: View {
     /// The bill being paid.
     let bill: Bill
     
@@ -60,7 +60,7 @@ struct PaymentDetailsCard: View {
     @Previewable @State var paymentAmount = Decimal(142.50)
     @Previewable @State var showAmountPicker = false
     
-    PaymentDetailsCard(
+    OldPaymentDetailsCard(
         bill: Bill.samples[0],
         selectedAccount: $selectedAccount,
         paymentAmount: $paymentAmount,

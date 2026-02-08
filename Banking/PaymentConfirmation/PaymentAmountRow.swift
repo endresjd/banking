@@ -38,11 +38,7 @@ struct PaymentAmountRow: View {
                 ScrollView {
                     AmountPickerView(
                         bill: bill,
-                        selectedAmount: $paymentAmount,
                         onConfirm: {
-                            showAmountPicker = false
-                        },
-                        onDismiss: {
                             showAmountPicker = false
                         }
                     )
