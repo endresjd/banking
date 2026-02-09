@@ -29,7 +29,10 @@ struct AmountPickerView: View {
     init(bill: Bill, onConfirm: @escaping () -> Void) {
         self.bill = bill
         self.onConfirm = onConfirm
-        self._selectedAmount = State(initialValue: bill.minimumDueAmount)
+        let halfAmount = bill.amount / 2
+        let halfAmountDouble = Double("\(halfAmount)") ?? 0
+        let roundedDownAmount = Decimal(floor(halfAmountDouble))
+        self._selectedAmount = State(initialValue: roundedDownAmount)
     }
 
     /// Indicates whether the selected account has insufficient funds for the minimum due.

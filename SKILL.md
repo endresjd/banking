@@ -832,6 +832,8 @@ Always add a blank line after variable assignments to separate them from subsequ
 ### Variables
 
 **After any variable declaration/assignment** (`let`, `var`), add a blank line before the next statement (unless the next line is also a variable declaration).
+This applies even when the next statement is a method call on that same variable.
+Do not insert blank lines between consecutive single-line variable declarations; keep those grouped together, even when switching from `let` to `var`.
 
 ### Examples
 
@@ -841,6 +843,11 @@ let joke = try #require(service.joke)
 
 #expect(joke.id == 42)
 #expect(joke.type == "programming")
+
+// ✅ CORRECT - Blank line before calling a method on the same variable
+var textContext = context
+
+textContext.translateBy(x: x, y: y)
 
 // ✅ CORRECT - Multiple assignments grouped together
 let mockData = createValidJokeData()
@@ -1279,18 +1286,20 @@ rather than implementing architectural patterns from other platforms.
 
 ### Never Use NS Types
 
-**NEVER use Foundation NS-prefixed types in Swift code.** Always use Swift's native types instead.
+**NEVER use Foundation NS-prefixed types or functions in Swift code.** Always use Swift's native types and Swift standard-library math instead.
 
-**Prohibited NS types:**
+**Prohibited NS types and helpers (non-exhaustive):**
 - `NSString` - Use `String` instead
 - `NSArray` - Use `Array` or `[Type]` instead
 - `NSDictionary` - Use `Dictionary` or `[Key: Value]` instead
 - `NSNumber` - Use `Int`, `Double`, `Bool`, `Decimal`, etc. instead
-- `NSDecimalNumber` - Use `Decimal` instead
+- `NSDecimalNumber` - Use `Decimal` instead (do not cast to `NSDecimalNumber`)
+- `NSDecimalNumberHandler` - Do not use for rounding
+- `NSDecimalRound` - Do not use for rounding
 - `NSData` - Use `Data` instead
 - `NSDate` - Use `Date` instead
 - `NSURL` - Use `URL` instead
-- Any other `NS`-prefixed type from Objective-C
+- Any other `NS`-prefixed type or function from Objective-C
 
 **Rationale:** Swift provides native types that are more type-safe, expressive, and idiomatic. NS types are legacy Objective-C types that should only appear in interop scenarios with Objective-C code.
 

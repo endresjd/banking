@@ -28,11 +28,10 @@ struct CurvedText: View {
             for (index, character) in text.enumerated() {
                 let angle = angleForCharacter(at: index)
                 let radians = angle * .pi / 180
-                
                 let x = center.x + radius * cos(radians)
                 let y = center.y + radius * sin(radians)
-                
                 var textContext = context
+                
                 textContext.translateBy(x: x, y: y)
                 
                 // For top arc (counterclockwise), rotate so text reads left to right
@@ -44,7 +43,8 @@ struct CurvedText: View {
                 }
                 
                 let text = Text(String(character))
-                
+//                    .font(.system(size: 12, weight: .heavy))
+
                 textContext.draw(text, at: .zero)
             }
         }
